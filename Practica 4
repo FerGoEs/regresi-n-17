@@ -1,0 +1,67 @@
+z<-11:30
+dim(z)<-c(5,4)
+rownames(z)<-c("escuela1", "escuela2", "escuela3", "escuela4","escuela5")
+colnames(z)<-c("toluca","pachuca", "guadalajara","monterrey")
+View(z)
+
+##Pegar reglon en una matriz existente###
+z<- rbind(z, c(4,5,6,7))
+rownames(z)<-c("escuela1", "escuela2", "escuela3", "escuela4","escuela5","escuela6")
+##Pegar columna en una matriz existente###
+z <-cbind(z,c(14,25,26,47,99,81))
+colnames(z)<-c("toluca","pachuca", "guadalajara","monterrey","jocotitlan")
+z
+
+##Corregir un dato de la matriz##
+z["escuela1","jocotitlan"]<- 28 ##Editar la posicion 
+z
+edit(z) ##Editar mi matriz manualmente##
+
+## %*%  ## ##Multiplicar matrices##
+## t() ## Trasponer 
+
+#######
+nombres <- c("sergio","juan","rocio","jessica")
+#######
+edad <- c(30,43,21,16) 
+altura <-c(170,165,175,172)
+salario <- c(3000,4500,2200,4300)
+base1 <- data.frame(nombres,edad,altura,salario)
+base1
+
+base1[4,3]<- 178 ##ajustar la posicion en la matriz##
+base1$salario*2.2 -> base1$salario ##multiplicar el salario 2.2##### 
+base1
+
+peso<-c(83.2,75.2,69.2,70.5)
+base1 <- data.frame(nombres,edad,altura,salario,peso)
+base1$salario*2.2 -> base1$salario
+base1$peso*1.2 -> base1$peso
+base1
+
+## round () ##  #redondeo 
+round(base1$peso,2) -> base1$peso 
+base1
+
+## Introduccir una columna en data frame## 
+base1$escol <-c("prepa","lic","ninguno","prim")
+base1
+base1$sexo <-c(1,1,2,2)
+base1
+
+###crear una tabla de la varaible sexo##
+table(base1$sexo) ## Tabla de frecuencia ##
+
+attach(base1) ## Apartir de esta linea R decta las variables de mi base ##
+table(sexo)
+detach(base1)
+
+#### Paqueteria y libreria ####
+### Instalar paqueteria desde internet ###
+install.packages("foreign")#Importar-exportar base de datos
+install.packages("questionr")## expandir frecuencia de base de datos ### 
+install.packages("car") #### regresion ####
+
+library(foreign)
+library(questionr)
+library(car)
