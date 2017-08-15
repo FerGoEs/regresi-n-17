@@ -1,0 +1,28 @@
+#####Bajar la base de datos##
+temporal<- tempfile()
+download.file("", temporal)
+files=unzip(temporal, list = TRUE) $Name
+unzip(temporal, files = file(grepl("bdt", files)))
+
+##
+require(foreign)
+mti2015 <- read.dbf("C:/Users/Sala-D/Desktop/mti2015_05_17_sdem_precodificado.DBF")
+table(mti2015$SEX)
+install.packages("questionr")
+require(questionr)
+wtd.table(mti2015$SEX , weights = mti2015$FAC_MTI) ## Datos estadisticos expandios## 
+ls(mti2015)
+sum(mti2015$FAC_MTI)
+table(mti2015$R_DEF_ENOE)
+table(mti2015$CS_P12)
+wtd.table(mti2015$CS_P12, weights = mti2015$FAC_MTI)
+wtd.table(mti2015$R_DEF_ENOE, weights = mti2015$FAC_MTI)
+wtd.table(mti2015$EDA, mti2015$CS_P12, weights = mti2015$FAC_MTI)
+
+######Filtar datos de la base#####
+edomexmuj <- subset(mti2015, mti2015$ENT == 15 & mti2015$SEX ==2)
+sub<- subset( mti2015, mti2015$ENT == "01" | mti2015$ENT == 32)
+table(sub$ENT)
+as.numeric(mti2015$ENT)
+
+class(mti2015$ENT)
