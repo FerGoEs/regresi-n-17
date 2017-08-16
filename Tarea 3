@@ -1,0 +1,13 @@
+
+edomexmuj <- subset(mti2015, mti2015$ENT == 15 & mti2015$SEX ==2)
+
+sub<- subset( mti2015, mti2015$ENT == "01" | mti2015$ENT == 32)
+
+table(sub$ENT)
+
+as.numeric(mti2015$ENT)
+
+mti2015$ENT<-as.numeric(mti2015$ENT)
+class(mti2015$ENT)
+sub<- subset( mti2015, mti2015$ENT == 01 | mti2015$ENT == 32)
+mti2015$ENT<-as.numeric(mti2015$ENT)
