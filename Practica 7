@@ -1,0 +1,71 @@
+temporal<- tempfile()
+download.file("http://www.beta.inegi.org.mx/contenidos/proyectos/enchogares/modulos/mti/2015/microdatos/mti2015_bases_conapo_dbf.zip",temporal)
+files=unzip(temporal, list = TRUE) $Name
+unzip(temporal, files = files[grepl("dbf", files)])
+library(foreign)
+files
+mti15 <- data.frame(read.dbf("mti2015_05_17_sdem_precodificado.DBF"))
+class(mti15$ENT)
+mti15$ENT<-as.numeric(mti15$ENT)
+
+###### Etiquetar una varaible ######
+table(mti15$CS_P15)
+mti15$CS_P15 <- factor( mti15$CS_P15, levels = c(1,2,3,4), labels = c("primaria", "secundaria"," preparatoria", "no sabe"))
+mti15$RAMA <- factor( mti15$RAMA, levels = c(1,2,3,4,5,6,7), labels = c("agropecuario",
+                                                                        "construccion","industria manufacturera",
+                                                                        "comercio","servicio","otros","no especificado"))
+mti15$RAMA <- as.numeric(mti15$RAMA)
+
+##### Recodificar la variable #####
+install.packages("plyr")
+library("plyr")
+mti15$RAMA1[mti15$RAMA == 1] <- 1  
+mti15$RAMA1[mti15$RAMA == 2 | mti15$RAMA == 3 ] <- 2
+mti15$RAMA1[mti15$RAMA == 4 | mti15$RAMA == 5 ] <- 3
+mti15$RAMA1[mti15$RAMA == 6 | mti15$RAMA == 7 ] <- 4
+mti15$RAMA1[mti15$RAMA == 5 ] <- 3
+mti15$RAMA1[mti15$RAMA == 6 ] <- 4
+mti15$RAMA1[mti15$RAMA == 7 ] <- 4
+
+table(mti15$RAMA1)
+table(mti15$EDA)
+mti15$RAMA1 <- factor( mti15$RAMA1, levels = c(1,2,3,4),
+                       labels = c("primario","secundario","terciario",
+                                  "no especificado"))
+
+##### Recodificar la variable EDA en una nueva variable que se llame GPOEDA y etiquetarla
+#### Esta recodificacion debe quedar en 4 lineas del script 
+##la recodifcacioin es la siguente##
+## 5,6,7 == 1 #niño
+## 8,9,10,11 == 2 Pre ado
+## 12,13,14 == 3  ado 
+## 15,16,17 == 4 joven 
+#una vez que se hayan realizado el ejercicio generar  una tabla
+## con datos expedidos y exportarla en excel 
+
+mti15$gpoedad[mti15$EDA  == "05" | mti15$EDA  == "06" | mti15$EDA  == "07"] <- 1
+mti15$gpoedad[mti15$EDA  == "08" | mti15$EDA  == "09" | mti15$EDA  == "10" | mti15$EDA  == "11" ] <- 2
+mti15$gpoedad[mti15$EDA  == "12" | mti15$EDA  == "13" | mti15$EDA  == "14"] <- 3
+mti15$gpoedad[mti15$EDA  == "15" | mti15$EDA  == "16" | mti15$EDA  == "17"] <- 4
+table(mti15$gpoedad)
+mti15$gpoedad <- factor( mti15$gpoedad, levels = c(1,2,3,4), labels = c("niños", "pre ado"," ado", "joven"))
+install.packages("questionr")
+require(questionr)
+wtd.table(mti15$gpoedad, weights = mti15$FAC_MTI)
+table(mti15$FAC_MTI)
+
+write.table(wtd.table(mti15$gpoedad, weights = mti15$FAC_MTI) , file = "datos expandidos.txt", sep = "\t", 
+            eol = "\n", dec = ".", row.names = TRUE,
+            col.names = TRUE)
+###### Otra forma de realizarlo ######
+mti15$EDA <- as.numeric(as.character(mti15$EDA))
+table(mti15$EDA)
+mti15$gpoedad[mti15$EDA >= 5 &  mti15$EDA  <= 7] <- 1
+mti15$gpoedad[mti15$EDA >= 8 &  mti15$EDA  <= 11] <- 2
+mti15$gpoedad[mti15$EDA >= 12 &  mti15$EDA  <= 14 ] <- 3
+mti15$gpoedad[mti15$EDA >= 15 &  mti15$EDA  <= 17 ] <- 4
+
+mti15$gpoedad <- factor( mti15$gpoedad, levels = c(1,2,3,4), labels = c("niños", "pre ado"," ado", "joven"))
+t<-wtd.table(mti15$gpoedad, weights = mti15$FAC_MTI)
+t
+write.csv(t, file = "Practica.csv")
