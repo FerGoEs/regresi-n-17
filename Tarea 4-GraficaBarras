@@ -1,0 +1,26 @@
+temporal<- tempfile()
+download.file("http://www.beta.inegi.org.mx/contenidos/proyectos/enchogares/modulos/mti/2015/microdatos/mti2015_bases_conapo_dbf.zip",temporal)
+files=unzip(temporal, list = TRUE) $Name
+unzip(temporal, files = files[grepl("dbf", files)])
+library(foreign)
+mti15 <- data.frame(read.dbf("mti2015_05_17_sdem_precodificado.DBF"))
+class(mti15$ENT)
+install.packages("questionr")
+require(questionr)
+
+mti15$EDA <- as.numeric(as.character(mti15$EDA))
+table(mti15$EDA)
+mti15$gpoedad[mti15$EDA >= 5 &  mti15$EDA  <= 7] <- 1
+mti15$gpoedad[mti15$EDA >= 8 &  mti15$EDA  <= 11] <- 2
+mti15$gpoedad[mti15$EDA >= 12 &  mti15$EDA  <= 14 ] <- 3
+mti15$gpoedad[mti15$EDA >= 15 &  mti15$EDA  <= 17 ] <- 4
+mti15$gpoedad <- factor( mti15$gpoedad, levels = c(1,2,3,4), labels = c("Niños","Pre-Ado","Ado","Joven"))
+t<-wtd.table(mti15$gpoedad, weights = mti15$FAC_MTI)
+
+t<-t/1000000
+t
+grafica<-barplot(t, width = 1, space = NULL, names.arg = t,
+                 legend.text = c("Niños","Pre-Ado","Adol","Joven"), beside = TRUE, horiz = FALSE,
+                 col = c(2,3,4,5), border = par("fg"),main = " TRABAJO INFANTIL",
+                 sub = "DATOS EXPANDIDOS", xlim = c(0,8.5), ylim = c(0,10),
+                 axes = TRUE,axisnames = TRUE, ylab = "Frecuencia(Millones)", xlab = "Grupo de Edades", font.axis=8)
