@@ -1,0 +1,25 @@
+#### ####
+#### ####
+### ####
+###  
+##Datos##
+###
+#### Edad de niños dela ciudad de toluca####
+####  Altura de los niños de la cuidad de Toluca ####
+### Relacion (De mayyor Edad- Mayor Estatura #### ####
+#### ####
+### ####
+###  
+##Datos##
+###
+#### Edad ####
+####  Altura ####
+### Relacion de a mayor edad mayor estatura en los niños de ciudad de toluca
+edad<-c(11,12,13,14,15,16)
+altura <-c(1.40,1.45,1.42,1.50,1.60,1.55)
+a_a<-data.frame(edad,altura)
+View(a_a)
+install.packages("ggplot2")
+require(ggplot2)
+grafica<- plot(edad,altura, xlab = "Edad de los niños ", ylab = "Altura de los niños",main = "Grafica de Dispersion EDAD-ALTURA", col=c("blue","red"))
+ 
