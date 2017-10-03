@@ -1,0 +1,47 @@
+#### ejercicio 01 ####
+#el articulo incluye una grafica de dispersion junto con una recta de minimos cuadrados, 
+#de x=volumen de precipitacion pluvial y y=volumen de escurrimiento en un lugar particular.
+
+x<-c(5,12,14,17,23,30,40,47,55,67,72,81,96,112,127)
+y<-c(4,10,13,15,15,25,27,46,38,46,53,70,82,99,100)
+
+#a)¿será que una grafica de dispersion de los datos apoya el uso del modelo de regresion lineal simple?
+
+mdl1<- lm(y~x)
+summary(mdl1)
+
+plot(y~x,xlab="volumen de precipitacion pluvial", ylab="Pvolumen de escurrimiento" ,xlim=c(5,127), ylim=c(4,100), main="Diagrama de Dispersion")
+abline(mdl1)
+
+#si, ya que en la grafica de dispersion se puede observar que tan exacto es la regresion lineal simple de acuerdo a los datos que se nos presentan
+
+#b)calcule las estimaciones puntuales de la pendiente y la intercepcion de la recta de regresion de poblacion
+bo<-mdl1$coefficients[1] #intercepcion Bo
+b1<-mdl1$coefficients[-1]  #B1
+
+y1<-bo+(b1*(x)) #recta estimada de regresion
+
+#c) calcule una estimacion puntual del volumen de escurrimiento promedio verdadero
+#cuando el volumen de precipitacion pluvial es de 50
+
+y1<-bo+(b1*(50))
+
+#d)calcule una estimacion puntual de la desviacion estandar sigma
+
+y2<-bo+(b1*(x))
+
+residuos<-y-y2
+res2<-residuos^2
+sse<-sum(res2)
+s2<-sse/13
+s<-sqrt(s2)
+
+#e) ¿que proporcion de la variacion observada del volumen de escurrimiento puede atribuirse
+#a la relacion de regresion lineal simple entre el escurrimiento y la precipitacion pluvial?
+
+sst<-(sum(y^2))-(((sum(y))^2)/15)
+
+coe=1-(sse/sst)
+
+#97.52% de la variacion observada del volumen de escurrimiento puede atribuirse
+#a la relacion de regresion lineal simple que relaciona el escurrimiento y la precipitacion pluvial.
