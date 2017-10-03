@@ -1,0 +1,52 @@
+##### EJERCICIO 02 #####
+# El agregado fino de concreto, hecho a partir de un agregado secundario clasificado de manera uniforme
+# y una paste de cemento-agua, es bebeficico en las zonas propensas a las lluvias excesivas debido a sus 
+# excelentes propiedades de drenaje. El articulo "Pvement Thickness Desing for no-fines concret parckin 
+# lots" empleo un analisis de minimos cuadrados en el estudio de como y= porosidad (%) se relaciona con
+# x=peso unitario (por ft cubico) en muestras de concreto. Considere los siguientes datos representativos
+
+x<-c(99, 101.1, 102.7, 103, 105.4, 107, 108.7, 110.8, 112.1, 112.4, 113.6, 113.8, 115.1, 115.2, 120)
+y<- c(28.8, 27.9, 27, 25.2, 22.8, 21.5, 20.9, 19.6, 17.1, 18.9, 16, 16.7, 13, 13.6, 10.7)
+
+# a) Obtenga la recta de la ecuaci??n estimada. A continuacion cree un grafico de dispersion de los datos
+#    y el grafico de la recta estimada. ??Sera que el modelo de la relaci??n puede explicar una gran parte 
+#    de la variaci??n observada en "y"?
+
+mdlo1<- lm(y~x)
+summary(mdlo1)
+
+plot(y~x,xlab="Peso", ylab="Porosidad" ,xlim=c(99,120), ylim=c(10,29), main="Gr??fica de Diagrama de Dispersi??n")
+abline(mdlo1)
+
+# b) Interprete la pendente de la recta de minimos cuadrados
+
+# Por cada unidad que se incrementa en el peso del concreto la porosidad disminuye en 0.90849 unidades.
+
+# c) ??que sucede si la estimacion linela se utiliza para predecir la porosidad cuando el peso unitario es
+#    de 135?. ??Por que esto no es una buena idea?
+
+(yest<- mdlo1$coefficients[1]+mdlo1$coefficients[2]*135)
+#No es buena idea debido a que la estimaci??n sale del rango en la cual se hace la regresion linel.
+
+# d) Calcule los residuos correspondientes de las dos primeras observaciones
+y_est1<-mdlo1$coefficients[1]+mdlo1$coefficients[2]*x
+(res1 <-y[1]-y_est1[1])
+(res2 <-y[2]-y_est1[2])
+resi<- y-y_est1
+
+# e) Calcule e interprete una estimacion puntual de sigma
+sse<- sum(resi^2)
+(sig<- sse/(length(x)-2))
+# Si sigma es un valor peque??o como en este caso, podemos decir que los puntos observados son muy cercanos
+# a la recta de regresion
+
+# f) ??que proporcion de la variacion obsevada en la porosidad se puede atribuir a las relaci??n lineal aprox
+#    entre el peso unitario y la porosidad?
+
+# El modelo tiene un 97.34% de variacion observda en en la porosidad es atribuible a la regresion lineal
+# que relaciona el peso unitario con la porosidad. R-Cuadrada
+
+
+
+
+
