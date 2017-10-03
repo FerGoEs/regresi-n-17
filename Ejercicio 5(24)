@@ -1,0 +1,63 @@
+#Ejercicio 05
+#Las especies de diatomes invasivas tienen el potencial para causar sustanciales
+# daños ecologicos y economicos en los rios. En el articulo se describe una 
+# investigacion del comportamiento de la colonia. Un aspecto de particular interes
+# fue si y= densidad de la colonia estaba relacionada con x= area de superficial
+# de la roca. El articulo contiene un diagrama de dispercion y el resumen de un 
+# analisis de regresion. A continuacion se presentan los datos 
+x<-c(50,71,55,50,33,58,79,26,69,44,37,70,20,45,49)
+y<-c(152,1929,48,22,2,5,35,7,269,38,171,13,43,185,25)
+
+#a) Ajuste el modelo de regresion lineal simple a estos datos, prediga la densidad
+# de la colonia cuando el area superficial =70 y 71 y calcule los residuos correspondientes
+# ¿ Como se comparan entre si ?
+ec <- lm(y~x)
+summary (ec)
+b0<-ec$coefficients[1] 
+b1<-ec$coefficients[-1]
+
+val1<-b0+(b1*70)
+val2<-b0+(b1*71)
+val1
+val2
+
+yp <- b0+b1*x
+resid<-y-yp
+yp
+resid[2]
+resid[12]
+# a)No esxiste alguna comparacion, ni una relacion directa entre los residuos
+# Debido a que la densidad de la colonia es demasiado cuando la superficie de la 
+# roca es 70
+
+
+# b) Calcule e interprete el coeficiente de determinacion  
+summary (ec)
+# El 12. 37 % de de las variaciones observadas con el area de la suferficie de la roca,
+# es atribudio a la reg. lineal, esta indica la poca relacion que existe entre los datos 
+# de la superficie de la roca con la densidad de la colonia 
+
+#c) La segunda obervacion tiene un valor muy extenso. Estas observacion puede haber
+# tenido un impacto sustancial en el ajuste del modelo y en las conclusiones posteriores
+# Elimine y vuelva a calcular la ecuacion de la recta ¿ Sera que difiere 
+# sustancialmente de la ecuacion antes de la eliminacion ?
+
+a<-c(50,55,50,33,58,79,26,69,44,37,70,20,45,49)
+b<-c(152,48,22,2,5,35,7,269,38,171,13,43,185,25)
+ec <- lm(b~a)
+ec
+summary (ec)
+b0<-ec$coefficients[1] 
+b1<-ec$coefficients[-1]
+
+yp <- b0+b1*x
+yp
+
+g1<-plot(y~x)
+         abline(ec,col="green")
+g2<-plot(b~a)
+         abline(ec,col="red")
+# Si esxisten un diferencia significativa, pero donde la relacion aun es menor
+# dado que ahora el coeficiente de determinacion es de 2.38, lo que indica la 
+# casi nula relacion de los datos obtenidos con los de la regresion 
+
