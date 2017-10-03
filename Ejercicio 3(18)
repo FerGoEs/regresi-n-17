@@ -1,0 +1,43 @@
+#Ejercicio 03
+#Articulo"Experimental Study of Recycled Rubber-Filled High-Strength Concrete"
+#y=esfuerzo axial(MPa)en
+#x=esfuerzo cúbico (Mpa)
+x<-c(112.3,97.0,92.7,86.0,102.0,99.2,95.8,103.5,89.0,86.7)
+y<-c(75.0,71.0,57.7,48.7,74.3,73.3,68.0,59.3,57.8,48.5)
+#a)Obtenga la ecuación de la recta de mínimos cuadrados e interprete su pendiente 
+ec <- lm(y~x) 
+summary (ec)
+ec$coefficients
+ec$coefficients[1] 
+ec$coefficients[-1]
+
+
+x1<- x^2
+Sxy <-((sum(x*y))-((sum(x)*sum(y))/length(x)))
+Sxx <- (sum(x1)-(((sum(x))^2)/length(x)))
+B1 <- Sxy/Sxx
+mediax <- mean(x)
+mediay <- mean(y)
+B0 <-mediay-B1*mediax
+B1
+B0
+
+#b)Calcule e interprete el coeficiente de determinación
+yp <- B0+B1*x
+resid<-y-yp
+SSE <- sum(resid^2)
+SSE
+SST<- (sum(y^2))-(((sum(y))^2)/length(y))
+SST
+r2<-1-(SSE/SST)
+r2
+#Se presenta una variación del 63% en el esfuerzo axial 
+#c)Calcule e interprete una estimación de la desviación estándar del error en el modelo de regresión lineal simple
+desv<- (SSE/(length(x)-2))^(1/2)
+desv
+#Se presenta una dispersión de 6.624762 entre los valores observados de al rededor de la recta de regresión,
+# por lo que se observa que no estan tan alejados de la recta
+
+plot(y~x,main="Experimental Study of Recycled Rubber-Filled
+     High-Strength Concrete", xlab="Esfuerzo cúbico (Mpa)", ylab="Esfuerzo cúbico (Mpa)",xlim=c(85,115), ylim=c(45,80))
+abline(ec,col="green")
