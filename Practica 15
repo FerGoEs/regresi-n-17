@@ -1,0 +1,170 @@
+#### ejercicio clase ####
+#En una financiera se quiere evaluar a los corredores, bolsa de diferentes empresas, la
+#oferta y desempeño de cada corredor se evalua en 6 areas, empleando para cada una de las
+#areas una escala de 0 a 5. Tres de las areas evaluadas son ejecuacion en la operacion
+#facilidad de uso y gama de ofertas. Un 5 es la mejor calificacion en las dif areas
+#en los siguientes datos se presentan las puntuaciones obtenidas 
+
+corredor<-c("wall st","etrade1","etrade2","pre trade","track","water house","brown","br america","merill lynch","strong funds")
+operacion<-c(3.7,3.4,2.5,4.8,4,3,2.7,1.7,2.2,1.4)
+uso<-c(4.5,3,4,3.7,3.5,3,2.5,3.5,2.7,3.6)
+gama<-c(4.8,4.2,4,3.4,3.2,4.6,3.3,3.1,3,2.5)
+califtotal<-c(4,3.5,3.5,3.5,3.5,3.5,3,3,2.5,2)
+
+#a)determine la ec de reg estimada que se puede usar para predecir la calif total segun
+#las evaluaciones obtenidas
+
+#b)emplee la prueba F para determinar la significancia global de la relacion, el nivel de
+#significancioa que se requiere es de 95% ¿cual es su conclusion?
+
+#c) elimine cualquiera de las var indep que no sea significativa para la ec de regresion
+#estimada, ¿cual es la ec de reg estimada que recomienda? compare las r2 de los modelos.
+
+calificacion<-data.frame(califtotal,operacion,uso,gama)
+modelo<-lm(califtotal~operacion+uso+gama)
+summary(modelo)
+
+## La ecuacon de regresion es .34510+.25482x1+.13249x2+.45852x3 ###
+anova(modelo)
+
+calificacion1<-data.frame(califtotal,operacion,gama)
+modelo1<-lm(califtotal~operacion+gama)
+summary(modelo)
+
+## Supuestos
+names(modelo1)
+
+calificacion1$fitted.modelo1<-fitted(modelo1)  # se agrega la var fitted.modmo a la base de datos
+calificacion1$residuals.modelo1<-residuals(modelo1)
+calificacion1$rstudent.modelo1<-rstudent(modelo1)
+
+shapiro.test(calificacion1$rstudent.modelo1)
+
+#en esta prueba esperamos un pvalue mayor a .05 y en este caso obtiene un p vale mayor a 
+#.05 por lo que podriamos decir que se acepta el supuesto de normalidad
+#ademos de shapiro testo se debe observar graficamente esta prueba a traves de las funciones
+#de qqnorm que nos permite hacer un grafico qq
+x11()
+qqnorm(calificacion1$rstudent.modelo1)
+qqline(calificacion1$rstudent.modelo1)
+
+
+#Supuesto de homocedasticidad
+install.packages("lmtest")
+require(lmtest)
+bptest(modelo1)
+
+Supuesto de independencia o de autocorrelacion
+
+
+dwtest(modelo1,alternative="two.sided")
+#en este caso se aplica la prueba dublin watson, como lo vimos la clase anterior esta prueba
+#se evalua de dos formas,por un lado el valor de dublin tiene que estar entre 1.5 y 2.5,
+#ademas de este valor hay que observar el pvalue que tiene que ser mayor a .05 para que
+#cumpla con el supuesto de independencia de los residuos
+
+#en este caso obtenemos un durbin watson de 2.4889 por lo que podemos decir que cumple el
+#supuesto de independencia y al cumplir las 3 prueblas formales podriamos decir que 
+#tenemos un buen modelo y podriamos plantear la ecuacion del modelo
+
+                                 # 28/10/2017 #
+#### EJERCICIO ####
+# Plantear un mrm de minimo 4 variables independientes, a este modelo que planteen van
+# a realizar lo sieguiente:
+# 1) Analizar la anova para conocer la bondad de ajuste
+# 2) a traves de los coeficientes detectar las variables independientes no significativas
+# 3) Analizar la R2 para conocer la variabilidad del modelo
+# 4) En dado caso de que haya una variable independiente no significativa, eliminarla y diagnosticar 
+#    el modelo a traves de las pruebas para los supuestos
+
+edad <- c(10,28,21,17,22,12,23,15,18,27)
+estatura <- c(1.30,1.65,1.60,1.80,1.70,1.45,1.75,1.68,1.90,1.80) 
+peso <- c(30,70,65,60,85,71,45,83,74,100)  
+ingre <- c(200,1500,1000,900,1200,300,1800,500,800,2000)
+
+# Significativa
+ahorro <- c(50,200,400,350,500,20,400,80,75,700)
+
+ahorr1 <- data.frame(ahorro,ingre,edad,peso,estatura)
+mod11<-lm(ahorro~ingre+edad+peso+estatura)
+summary(mod11)
+
+## La e
+
+#en mrm se revisa la r cuadrada ajustada y la r2 ajustada tiene un valor de  .5297 
+#lo que implica que la recta de regresion explica en 53% la variabilidad del modelo
+# despues de que tengamos una r2 ajustada aceptable, se analiza  el estadistico F para
+#saber la bondad de ajuste y la calidad del mdelo que estamos aplicando 
+
+anova(mod11)
+
+# Las variables independientes no significativas fueron estatura y edad por lo que haremos nuevamente el analisis ahora con
+# dos variables dependientes y nuestra variable dependiente.
+
+ahorr2 <- data.frame(ahorro,ingre,peso)
+mod12<-lm(ahorro~ingre+peso)
+summary(mod12)
+
+# En nuestro mrm se revisa  la r2 ajustada tiene un valor de .5933 
+# lo que implica que la recta de regresion explica casi un  60% la variabilidad del modelo
+# es decir, que la seguridad de modelo es elevada utilizando las nuevas variables.
+ anova(mod12)
+
+
+# Una vez que apicamos anova se va a revisar los valores del estadistico F
+# Y los p-value con la finalidad de conocer la nondad de ajuste del mrm
+# en este caso se observa que en las var indep ingreso  tiene un estadistico F de 14.6917
+# lo que es un buen estadistico F debido a que se esperan valores mayores a 1, 
+# para los p-value se espera un p.value<.05,  y un p-value<.05 con lo que podriamos decir que la var ingreso es
+# significativa.
+ 
+
+#Para el analisis de la variable peso, el estadistico F .4353 y un p-value de .530515,
+#en este caso podriamos concluir que esta variable no resulta significativa para nuestro
+#modelo debido a que el estadistico F es apenas no es mayor a 1 y el p-value es mayor a 0.05
+
+#Lo siguiente que vamos hacer es realizar el diagnostico de nuestro modelo a traves de las
+#pruebas formales de Shapiro, breusch pagan y durbin watson
+
+#para aplicar esta prueba se necesita conocer los valores ajustados,los residuos del 
+#modelo y los residuos estudentizados
+
+names(mod12)
+
+ahorr2$fitted.mod12<-fitted(mod12)  # se agrega la var fitted.modmo a la base de datos
+ahorr2$residuals.mod12<-residuals(mod12)
+ahorr2$rstudent.mod12<-rstudent(mod12)
+
+#Diagnostico de los supuestos
+
+##Supuesto 1 Normalidad
+# para el supuesto de normalidad se aplica la prueba de shapiro 
+#en r la funcion que aplica esta prueba es shapiro.test
+
+shapiro.test(ahorr2$rstudent.mod12)
+
+#en esta prueba esperamos un pvalue mayor a .05 y en este caso obtiene un p vale mayor a 
+#.05 por lo que podriamos decir que se acepta el supuesto de normalidad
+#ademos de shapiro test se debe observar graficamente esta prueba a traves de las funciones
+#de qqnorm que nos permite hacer un grafico qq
+
+x11()
+qqnorm(ahorr2$rstudent.mod12)
+qqline(ahorr2$rstudent.mod12)
+
+#Supuesto de homocedasticidad
+install.packages("lmtest")
+require(lmtest)
+bptest(mod12)
+
+#Supuesto de independencia o de autocorrelacion
+#en este caso se aplica la prueba dublin watso, como lo vimos la clase anterior esta prueba
+#se evalua de dos formas,por un lado el valor de dublin tiene que estar entre 1.5 y 2.5,
+#ademas de este valor hay que observar el pvalue que tiene que ser mayor a .05 para que
+#cumpla con el supuesto de independencia de los residuos
+
+dwtest(mod12,alternative="two.sided")
+
+#en este caso obtenemos un durbin watson de 2.0952 por lo que podemos decir que cumple el
+#supuesto de independencia y al cumplir las 3 prueblas formales podriamos decir que 
+#tenemos un buen modelo.
