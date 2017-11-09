@@ -1,0 +1,55 @@
+##### 09/11/2017 ######
+
+### Swiss ###
+# Mecicion estandarizada de la fecundidad e indicadores socioeconomicos para cada de las
+# 47 provincias
+require(stats)
+base1<- data.frame(swiss)
+
+### analisis exploratorio ###
+names(base1)
+pairs(base1)   ### Grafica las variables en pares, busca la relacion entre variables, se confirma con correlacion
+cor(base1)     ### Matriz de correlacion
+
+#### propuesta modelo de regresion multiple con base en el analisis exploratorio ###
+regresion1<-lm(Infant.Mortality~Fertility,data = base1)
+
+#### Modelo propuesto anteriormente 
+nulo<- lm(Fertility ~ 1, data = base1)   # Modelo nulo, fertility independiente
+### Si modelo nulo es mejor que los otros modelos significa que tus variables independiente
+### no tienen significancia.
+completo <- lm(Fertility ~ ., data = base1) 
+### Con el punto se ponen todas las variables independientes
+step(nulo,scope = list(lower=nulo, upper= completo), direction = "forward") 
+### step, funcion que permite calcular el AIC 
+### scope, incorpora todas las posibilidades de modelos desde nulo hasta completo
+### analizando los modelos con todas las v.independientes
+summary(completo)
+help(step)
+
+##### EJERCICIO #####
+
+help(datasets)
+library(help = "datasets")
+require(datasets); data(longley); #?WorldPhones
+base2 <- data.frame(longley)
+names(base2)
+base2
+
+names(base2)
+pairs(base2)   
+cor(base2) 
+
+nulo1<- lm(Population ~ 1, data = base2)  
+summary(nulo1)
+completo1 <- lm(Population ~ ., data = base2) 
+step(nulo1,scope = list(lower=nulo1, upper= completo1), direction = "forward") 
+
+### Population ~ Year + Armed.Forces + GNP + Unemployed + GNP.deflator##
+### Nuestro modelo de regresion  es sobre la regresion economica de Logley 
+## Esta regresion cuanta con 7 variables de la cual Population es nuestra varaible dependiente
+## en el modelo propuesto 
+## Nuestra varible independiente en el modelo nulo es Population ##
+## De acuerdo al criterio de informacion AIC el mejor modelo es aquel que contempla
+## 5 varaibles independientes las cuales son Year,Armed.Forces,GNP,Unemployed,GNP.deflator
+## Donde el AIC fue de -22.794
