@@ -1,0 +1,73 @@
+##### 10/NOVIEMBRE/2017 #####
+
+# Elijo el mejor modelo 
+modelo3<-lm(Population ~ Year + Armed.Forces + GNP + Unemployed + GNP.deflator,data =longley )
+summary(modelo3)
+# Con la finalidad de observar aspectos basicos como la R2 ajustada que nos permite conocer
+# la variabilidad explicada del modelo, los errores del residuo al estandar es de .4264,
+# la significancia de las varaibles 3 son significativas (GNP, Unemployed, GNP. Deflactor)
+# El estadistico F y el p-values para ver el ajuste del modelo 
+# La prueba de hipotesis que se aplica en el estadistico F es Ho: B0,B1,B2 .... Bk=0 
+# H1:Al menor un bj es diferente de 0
+# Si es el valor del p-values es menor a 0.05 se rechaza la hipotesis nula y se acepta 
+# la alternativa, y ademas el estadistico F debe ser mayor a 1 
+# Al parecer tenemos un buen modelo segun estos indicadores
+
+### PRUEBAS FORMALES DE LOS SUPUESTOS....
+## En las pruebas se espera no rechazar la hipotesis nula, por lo que se espera un
+## p-value > .05
+# Ho: los errores se distribuyen normalmente (Shapiro)
+## Pruebas de mrm 
+shapiro.test(rstudent(modelo3)) ## Prueba shapiro para normalidad
+# aqui se espera no rechazar la hipotesis nula por lo que el valor del p-value debe ser mayor a .05
+# aqui observamos un p-value de .2932, por lo que podemos mencionar que no rechazamos la H0
+# es decir, concluimos que los errores se distribuyen normalmente
+require(lmtest)
+bptest(modelo3) ## Prueba breusch pagan que permite ver autocorrelacion, se espera un p-value
+# mayor a .05 para no rechazar la H0, es te modelo nos permite saber que no hay mas de dos variables 
+# que aporten lo mismo al modelo.
+# En este caso tenemos un p-value de .7372 por lo que no rechazamos H0, es decir, este modelo
+# ai cumple el supuesto de autocorrelacion
+dwtest (modelo3, alternative = "two.sided") # Prueba de independencia, Durbin-Watson
+#H0 los errores son independientes, se busca un p-value>.05 y el valor de Durbin-Watson
+# de 1.5 a 2.5, 
+# La prueba  T para H0: coeficientes=0 a H1: coeficientes !=0 es significativa
+# ya que    es menor a .05.
+###### Con el modelo del Profe #######
+#Interpretacion de Coeficientes
+# El modelo elegido estima que hay un disminucion de  .07 en la poblacion
+# por cada año que trasncurre en la poblacion manetiendo constantes
+# las variables restantes.
+# Year -.07 ...... coeficiente
+# El modelo elegido estima que hay un aumento de .0001719 en la poblacion ante cada
+# aumento en 1% de las fuerzas armadas , manteniendo constantes las variables restantes.
+# Armed Forced .0001719.... coeficiente
+# El modelo elegido estima que hay un incremento de .01234 en la poblacion ante cada 
+# aumento de 1% de variable GNP manteniendo constantes las variables restantes.
+
+#### Ejericicio de la Clase ####
+
+require(datasets); data("Seatbelts"); 
+basef <- data.frame(Seatbelts)
+names(basef)
+pairs(basef)   
+cor(basef) 
+
+nulof<- lm(drivers ~ 1, data = basef)  
+summary(nulof)
+completof <- lm(drivers ~ ., data = basef) 
+step(nulof,scope = list(lower=nulof, upper= completof), direction = "forward") 
+summary(completof)
+
+modm <- lm(drivers ~ DriversKilled + front + rear + law + VanKilled, data = Seatbelts)
+summary(modm)
+
+# PRUEBAS
+shapiro.test(rstudent(modm))
+# aqui observamos un p-value de .9973, por lo que podemos mencionar que no rechazamos la H0
+# es decir, concluimos que los errores se distribuyen normalmente.
+require(lmtest)
+bptest(modm)
+# En este caso tenemos un p-value de .0298 por lo que no rechazamos H1, es decir, este modelo
+# NO cumple el supuesto de autocorrelacion Y por lo tanto hay que corregir este aspecto.
+dwtest (modm, alternative = "two.sided")
