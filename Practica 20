@@ -1,0 +1,93 @@
+#Ejemplo
+# Tasas de respiracion 
+
+tr<-c(71,53,55,48,69,84,21,68,68)
+pot<-c(388,258,292,205,449,331,114,580,622)
+zinc<-c(2414,10693,11682,12560,2464,2607,16205,2005,1825)
+
+estudio<-data.frame(tr,pot,zinc)
+pairs(estudio)
+cor(estudio)
+
+r1<-lm(tr~1, data=estudio)
+r2<-lm(tr~., data=estudio)
+
+step(r1,scope = list(lower=r1,upper=r2), direction = "forward")
+m3<-lm(tr~zinc, data = estudio)
+summary(m3)
+
+################
+limestudio <- seq(min(estudio$zinc), max(estudio$zinc), length= 9)
+limestudio <- data.frame(limestudio)
+limestudio
+limestud<-predict.lm(r2, limestudio,interval ="prediction", se.fit = TRUE, data=estudio)
+head(limestud$fit) ### Generar los limites
+matplot(limestudio,limestud$fit, type = "l")
+
+####Predicciones#####
+predict(r2,data.frame(zinc=10000, pot = 40), interval = "predict")
+
+#### Ejemplo ###
+peso<-c(74,92,63,58,78,85,85,73,62,80,72,74)
+altura<-c(168,196,170,175,162,169,190,186,176,170,176,179)
+ritmo<-c(62,75,60,71,66,62,79,74,70,66,71,69)
+edad<-c(25,31,29,64,44,41,37,35,34,29,19,50)
+
+estudio1<-data.frame(ritmo,peso,altura,edad)
+pairs(estudio1)
+cor(estudio1)
+
+r12<-lm(ritmo~1, data=estudio1)
+r22<-lm(ritmo~., data=estudio1)
+
+limestudio1 <- seq(min(estudio1$peso), max(estudio1$peso), length= 12)
+limestudio2 <- seq(min(estudio1$altura), max(estudio1$altura), length= 12)
+limestudio3 <- seq(min(estudio1$edad), max(estudio1$edad), length= 12)
+limestudio <- data.frame(limestudio1,limestudio2,limestudio3)
+limestudio
+limestud<-predict.lm(r22, limestudio,interval ="prediction", se.fit = TRUE, data=estudio1)
+head(limestud$fit) ### Generar los limites
+matplot(limestudio,limestud$fit, type = "l")
+
+predict(r22,data.frame(peso=60 , altura=190, edad = 61), interval = "predict")
+
+
+##### Ejercicio ####
+#Analisis de entrega de productos#
+#Se utiliza el tiempo de la var. dep, para dcirle a los clientes cuanto va a tardar
+#en llegar el producto.Saben que la var. que impactan en el tiempo de entrega son la 
+#distancia y el # de cajas
+cajas<- c(10,15,10,20,25,18,12,14,16,22,24,17,13,30,24)
+distancia <-c(30,25,40,18,22,31,26,34,29,37,20,25,27,23,33)
+tiempo<-c(24,27,29,31,25,33,26,28,31,39,33,30,25,42,40)
+
+estudio<-data.frame(cajas,distancia,tiempo)
+pairs(estudio)
+cor(estudio)
+r1<-lm(tiempo~1, data=estudio)
+r2<-lm(tiempo~., data=estudio)
+
+step(r1,scope = list(lower=r1,upper=r2), direction = "forward")
+m1<-lm (tiempo ~ cajas + distancia, data = estudio)
+summary(m1)
+
+shapiro.test(rstudent(m1))
+# Los errores no se distribuyen normalmente
+require(lmtest)
+bptest(m1)
+# Se acepta el modelo debido a que el p-values es mayor a .05
+dwtest (m1, alternative = "two.sided")
+
+###### no pasa el modelo de normalidad ####
+install.packages("car")
+require (car)
+outlierTest(r2,cutoff=.05, n.max=5, order=T)
+influencePlor(r2, id.n = 5)
+# la observacion 5 indican con problemas
+# ahora para confirmar los casos que tiene implicacion 
+# en el modelo que aplica el grafico de distancia de cook
+
+cmod2<- cooks.distance(r2)
+install.packages("faraway")
+require(faraway)
+halfnorm(cmod2,)
